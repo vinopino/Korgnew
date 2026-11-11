@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#16181c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VA-1 Synth">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="VA-1 – virtuell-analoger Synthesizer im Browser (Web Audio / AudioWorklet)">
+  <title>VA-1 Virtual Analog Synth</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Kopfzeile -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">VA-1</span>
+        <span class="sub">Virtual Analog</span>
+      </div>
+
+      <button id="powerBtn" class="power" aria-pressed="false" title="Audio Start/Stop">
+        <span class="led"></span><span class="power-label">AUDIO</span>
+      </button>
+
+      <div class="preset-bar">
+        <button id="presetPrev" class="icon-btn" aria-label="Vorheriges Preset">‹</button>
+        <select id="presetSelect" aria-label="Preset"></select>
+        <button id="presetNext" class="icon-btn" aria-label="Nächstes Preset">›</button>
+        <button id="presetSaveQuick" class="small-btn" title="Preset speichern">SAVE</button>
+      </div>
+
+      <canvas id="scope" width="240" height="48" aria-hidden="true"></canvas>
+
+      <div class="status">
+        <span id="voiceMeter" title="Aktive Stimmen">0 St.</span>
+        <button id="midiBtn" class="small-btn" title="Web MIDI aktivieren">MIDI</button>
+        <button id="panicBtn" class="small-btn danger" title="Alle Noten aus">PANIC</button>
+      </div>
+
+      <div id="masterSlot" class="master-slot"></div>
+    </header>
+
+    <!-- Seitenumschaltung (nur kompakte Ansicht / iPhone) -->
+    <nav id="tabs" class="tabs" role="tablist">
+      <button data-page="osc" class="active">OSZ</button>
+      <button data-page="filter">FILTER</button>
+      <button data-page="env">HÜLLK.</button>
+      <button data-page="mod">LFO</button>
+      <button data-page="arp">ARP</button>
+      <button data-page="fx">FX</button>
+      <button data-page="presets">PRESETS</button>
+    </nav>
+
+    <!-- Bedienfelder (werden von app.js erzeugt) -->
+    <main id="panels" class="panels"></main>
+
+    <!-- Spielbereich -->
+    <section class="perform">
+      <div class="perf-controls">
+        <div class="oct-box">
+          <button id="octDown" class="small-btn" aria-label="Oktave tiefer">OKT −</button>
+          <span id="octLabel">C3</span>
+          <button id="octUp" class="small-btn" aria-label="Oktave höher">OKT +</button>
+        </div>
+        <button id="holdBtn" class="small-btn" aria-pressed="false" title="Sustain / Halten">HOLD</button>
+        <div class="wheels">
+          <div class="wheel" id="bendWheel" title="Pitch Bend"><div class="wheel-thumb"></div><span>BEND</span></div>
+          <div class="wheel" id="modWheel" title="Modulation"><div class="wheel-thumb"></div><span>MOD</span></div>
+        </div>
+      </div>
+      <div id="keyboard" class="keyboard" aria-label="Klaviatur"></div>
+    </section>
+  </div>
+
+  <!-- Start-Overlay (Browser verlangen eine Benutzeraktion für Audio) -->
+  <div id="startOverlay" class="overlay">
+    <div class="overlay-card">
+      <div class="logo big">VA-1</div>
+      <p>Virtuell-analoger Synthesizer</p>
+      <button id="startBtn" class="start-btn">▶ Audio starten</button>
+      <p class="hint">Tippe auf den Button, um die Audioengine zu aktivieren.<br>
+        iPhone: Lautstärke hochdrehen – ggf. Stummschalter prüfen.</p>
+      <p id="startError" class="error"></p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="importFile" accept="application/json,.json" hidden>
+
+  <noscript>Für diesen Synthesizer muss JavaScript aktiviert sein.</noscript>
+
+  <!-- DSP-Module (im Hauptthread nur für den Fallback ohne AudioWorklet) -->
+  <script src="js/oscillator.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/envelopes.js"></script>
+  <script src="js/lfo.js"></script>
+  <script src="js/arpeggiator.js"></script>
+  <script src="js/audio-worklet.js"></script>
+  <!-- Hauptthread -->
+  <script src="js/effects.js"></script>
+  <script src="js/synth-engine.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
